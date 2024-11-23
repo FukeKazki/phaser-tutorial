@@ -51,16 +51,6 @@ export default class Game extends Phaser.Scene {
     this.load.tilemapTiledJSON(Game.MAP_JSON_FILE_KEY, "assets/images/tile.json");
   }
 
-  /*
-	Here we do several things.
-        
-	- We use the `create` method to initialize the game.
-	- We set some variables to store width and height that we may need later.,
-	- We set the background color, and create the player, the obstacles, and the coins.
-	- We also create the keyboard input to listen to the space key.
-	- Also, we add a collider between the player and the obstacles and an overlap
-	between the player and the coins. The key part there is to set a function that will be called when the player overlaps with a coin or hits an obstacle.
-	*/
   // シーンにタイルマップやスプライトを配置する処理を書く(シーンを作るメインはここ)
   create() {
     // タイルマップの作成

@@ -8,7 +8,13 @@ export default class Generator {
   init() {
     this.generateCloud();
     this.generateObstacle();
-    this.generateCoin();
+    // コインの生成を開始（遅延を加える）
+    this.scene.time.delayedCall(
+      Phaser.Math.Between(500, 1500), // 0.5秒から1.5秒の遅延
+      () => this.generateCoin(),
+      null,
+      this
+    );
   }
   /*
 This is the function that generates the clouds. It creates a new cloud and then calls itself again after a random amount of time.
@@ -53,10 +59,10 @@ This is done using the Phaser `time.delayedCall` function.
 /*
 This is a game object that represents a cloud. It's a simple rectangle with a random size and position. We use a tween to move it from right to left, and then destroy it when it's out of the screen.
 */
-class Cloud extends Phaser.GameObjects.Rectangle {
+class Cloud extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y) {
     const finalY = y || Phaser.Math.Between(0, 100);
-    super(scene, x, finalY, 98, 32, 0xffffff);
+    super(scene, x, finalY, "cloud");
     scene.add.existing(this);
     const alpha = 1 / Phaser.Math.Between(1, 3);
 

@@ -9,6 +9,7 @@ export default class GameStart extends Phaser.Scene {
       frameHeight: 32
     });
     this.load.image("tabako", "assets/images/tabako.png");
+    this.load.image("cloud", "assets/images/cloud.png");
 
     this.load.spritesheet("hacktyu-sprite", "./assets/images/hacktyu-sprite.png", {
       frameWidth: 32,
