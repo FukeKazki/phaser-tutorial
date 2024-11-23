@@ -10,8 +10,26 @@ export default class Game extends Phaser.Scene {
     super({ key: "game" });
   }
 
+  // タイルセットの１セルあたりの解像度(px)
+  public static CELL_PX = {
+    WIDTH: 32,
+    HEIGHT: 32
+  };
+
+  // タイルセットの画像ファイルのキー
+  // タイルセット名(map_demo.jsonの中のtilesets.name属性を指定)
+  private static TILESET_KEY_NAME = "Tileset";
+  // Phaser3の中のタイルセットを指すキーフレーズ（任意の文言）
+  private static TILESET_KEY_PLAIN = "Tileset";
+
+  // マップJSONファイルのキー
+  // Phaser3の中のマップJSONファイルを指すキーフレーズ（任意の文言）
+  private static MAP_JSON_FILE_KEY = "MAP_JSON_FILE_KEY";
+
   // シーンが初期化されるときに呼ばれる
-  init() {}
+  init() {
+    this.score = 0;
+  }
 
   // 主にアセット(スプライトや音楽など)を読込む処理を書く
   preload() {
@@ -20,11 +38,17 @@ export default class Game extends Phaser.Scene {
     this.load.audio("jump", "assets/sounds/jump.mp3");
     this.load.audio("dead", "assets/sounds/dead.mp3");
     this.load.audio("theme", "assets/sounds/theme.mp3");
-    this.load.spritesheet("coin", "./assets/images/coin.png", {
-      frameWidth: 32,
-      frameHeight: 32
+
+    this.load.spritesheet("tile", "assets/images/jungle tileset.png", {
+      frameWidth: 768,
+      frameHeight: 368
     });
-    this.load.bitmapFont("arcade", "assets/fonts/arcade.png", "assets/fonts/arcade.xml");
+    this.load.tilemapTiledJSON("map01", "assets/images/tile.json");
+    // tileset画像ファイルをロード（キー・ファイルパス）
+    this.load.image(Game.TILESET_KEY_PLAIN, "assets/images/Tileset.png");
+
+    // mapファイルのロード
+    this.load.tilemapTiledJSON(Game.MAP_JSON_FILE_KEY, "assets/images/tile.json");
   }
 
   /*
@@ -39,6 +63,23 @@ export default class Game extends Phaser.Scene {
 	*/
   // シーンにタイルマップやスプライトを配置する処理を書く(シーンを作るメインはここ)
   create() {
+    // タイルマップの作成
+    var tilemap: Phaser.Tilemaps.Tilemap = this.add.tilemap(Game.MAP_JSON_FILE_KEY);
+    // タイルセットをリンク付け
+    let planeTiles0: Phaser.Tilemaps.Tileset = tilemap.addTilesetImage(
+      Game.TILESET_KEY_NAME, // 第１引数は マップのjsonファイル中のtilesets.name属性を指定
+      Game.TILESET_KEY_PLAIN
+    ); // 第２引数はPhaser3内のキーワード
+
+    // レイヤーを作成
+    let mapGroundLayer0: Phaser.Tilemaps.TilemapLayer = tilemap.createLayer(
+      "地面", // Tiledで設定したレイヤー名
+      planeTiles0, // 定義したタイルセット
+      0,
+      0 // 第３引数・第４引数は、左上の座標を(0,0)とした時の配置位置(x,y)
+    );
+    mapGroundLayer0.setDisplaySize(600, 300); // レイヤーの表示サイズを設定
+    mapGroundLayer0.setCollisionByExclusion([-1]);
     // ゲーム開始時に呼ばれる
     this.width = this.sys.game.config.width;
     this.height = this.sys.game.config.height;
@@ -62,6 +103,8 @@ export default class Game extends Phaser.Scene {
       },
       this
     );
+
+    this.physics.add.collider(this.player, mapGroundLayer0);
 
     this.physics.add.overlap(
       this.player,
@@ -114,8 +157,18 @@ export default class Game extends Phaser.Scene {
 	And obviously, we finish the scene.
 	*/
   hitObstacle(player, obstacle) {
-    this.updateScoreEvent.destroy();
-    this.finishScene();
+     // プレイヤーのアニメーションを停止
+     this.player.anims.pause();
+ 
+     // 一時停止中に追加の演出（オプション）
+     this.cameras.main.shake(200, 0.51);
+ 
+     // 一定時間後にゲームオーバー処理を実行
+     this.time.delayedCall(800, () => {
+         // ゲームオーバー処理
+         this.updateScoreEvent.destroy();
+         this.finishScene();
+     }, [], this);
   }
 
   /*

@@ -27,7 +27,7 @@ This is done using the Phaser `time.delayedCall` function.
 
   generateObstacle() {
     this.scene.obstacles.add(
-      new Obstacle(this.scene, 800, this.scene.height - Phaser.Math.Between(32, 128))
+      new Obstacle(this.scene, 800, this.scene.height - Phaser.Math.Between(50, 128))
     );
     this.scene.time.delayedCall(
       Phaser.Math.Between(1500, 2500),
@@ -39,11 +39,11 @@ This is done using the Phaser `time.delayedCall` function.
 
   generateCoin() {
     this.scene.coins.add(
-      new Coin(this.scene, 800, this.scene.height - Phaser.Math.Between(32, 128))
+      new Coin(this.scene, 800, this.scene.height - Phaser.Math.Between(50, 128))
     );
     this.scene.time.delayedCall(
       Phaser.Math.Between(500, 1500),
-      () => this.generateCoin(1),
+      () => this.generateCoin(),
       null,
       this
     );
@@ -79,9 +79,9 @@ class Cloud extends Phaser.GameObjects.Rectangle {
 /*
 This is a game object that represents an obstacle. It works exactly like the cloud, but it's a red rectangle that is part of the obstacles group that we created in the `game` scene. It can kill the player if it touches it.
 */
-class Obstacle extends Phaser.GameObjects.Rectangle {
+class Obstacle extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y) {
-    super(scene, x, y, 32, 32, 0xff0000);
+    super(scene, x, y, "tabako");
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.body.setAllowGravity(false);
