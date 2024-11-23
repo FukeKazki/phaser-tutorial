@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --config .prettierrc.cjs -w \"src/**/*.{ts,tsx}\""
   },
   "devDependencies": {
